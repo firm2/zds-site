@@ -314,7 +314,7 @@ def i_see_that_the_form_required_fields_are_present(step, friendly_form_name):
             assert False, u"Implémentes moi"
 
 
-@step(u'Remplis le champ "(.*)" avec "(.*)"')
+@step(u'Je remplis le champ "(.*)" avec "(.*)"')
 def fill_the_field_with(step, id, value):
     """Fill in the field.
 
