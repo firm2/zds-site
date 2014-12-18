@@ -296,25 +296,25 @@ def given_i_am_not_logged_in(step):
     # what can I assert here?!
 
 
-@step(u'I see that the form "(.*)" required fields are present')
+@step(u'Je vois que les champs obligatoires du formulaire "(.*)" sont présents')
 def i_see_that_the_form_required_fields_are_present(step, friendly_form_name):
     """Load the django form and check all its required fields are present.
 
     """
-    assert world.forms, "No forms for {}!".format(world.app)
+    assert world.forms, u"Pas de formulaire pour {}!".format(world.app)
     form_name = friendly_form_name.title().replace(' ', '')
     form = getattr(world.forms, form_name, None)
-    assert form, "No form named {} in {}".format(form_name, world.app)
+    assert form, "Pas de formulaire appelé {} dans {}".format(form_name, world.app)
     form = form()
     for field in filter(lambda x: x.field.required, form):
         if world.using_selenium:
             assert world.sel.is_element_present("css=#id_{}".format(field.name)), \
-                "No field with id id_{}".format(field.name)
+                u"Aucun champ avec id : id_{}".format(field.name)
         else:
-            assert False, "implement me!"
+            assert False, u"Implémentes moi"
 
 
-@step(u'Rempli le champ "(.*)" avec "(.*)"')
+@step(u'Remplis le champ "(.*)" avec "(.*)"')
 def fill_the_field_with(step, id, value):
     """Fill in the field.
 
@@ -380,7 +380,7 @@ def check_the_field_(step, id, checked):
         assert False, 'Cette étape doit être implentée'
 
 
-@step(u'Résultat de la soumission du formulaire doit être "(.*)"')
+@step(u'Le résultat de la soumission du formulaire doit être "(.*)"')
 def result_of_form_submission_should_be(step, result):
     """Check for an errorlist, and compare that to expectation of presence.
 
@@ -392,8 +392,8 @@ def result_of_form_submission_should_be(step, result):
     """
     if world.using_selenium:
         if result == "pass":
-            assert not world.sel.is_element_present('css=div.alert')
+            assert not world.sel.is_element_present('css=div.error')
         elif result == "fail":
-            assert world.sel.is_element_present('css=div.alert')
+            assert world.sel.is_element_present('css=div.error')
     else:
         assert False, 'Cette étape doit être implentée'
