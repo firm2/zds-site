@@ -5,3 +5,5 @@ autopep8==1.0.4
 sphinx==1.2.3
 fake-factory
 lettuce
+selenium
+nose
