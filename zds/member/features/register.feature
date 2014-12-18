@@ -9,7 +9,7 @@ Feature: Inscription
         Alors Je suis sur le template "member/register/index.html"
         Alors Je vois dans le titre1 "Inscription"
 
-    Scenario: Réaliser une inscription avec succès
+    Scenario: Réaliser une ou plusieurs inscription(s)
         Utiliser selenium
         Je ne suis pas connecté
         Supposons un timeout de "10000" sec
