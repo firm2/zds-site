@@ -170,6 +170,7 @@ INSTALLED_APPS = (
     'haystack',
     'munin',
     'social.apps.django_app.default',
+    'lettuce.django',
 
     # Apps DB tables are created in THIS order by default
     # --> Order is CRITICAL to properly handle foreign keys
