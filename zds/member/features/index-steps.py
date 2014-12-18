@@ -215,7 +215,7 @@ def expect_redirect(step, from_url, to_url):
         world.sel.wait_for_page_to_load(world.timeout)
 
 
-@step(ru'Je vais sur le template "(.*)"')
+@step(ru'Je suis sur le template "(.*)"')
 def hit_template(step, template):
     """Using Django's Client, check that a template was rendered.
 
