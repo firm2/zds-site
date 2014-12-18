@@ -233,7 +233,7 @@ def hit_template(step, template):
 ######### DOM #######################################################
 
 
-@step(ru'Je vois dans la balise h(\d+) "(.*)"')
+@step(ru'Je vois dans le titre(\d+) "(.*)"')
 def see_header(step, header, text):
     """Check page for some text in a particular header type.
 
