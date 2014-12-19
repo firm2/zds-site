@@ -35,6 +35,7 @@ and expected behaviour.
 import logging
 import hashlib
 import time
+import os
 
 from datetime import datetime
 from lxml import html
@@ -74,7 +75,7 @@ def start_selenium():
     world.sel = selenium(
         'localhost',
         4444,
-        '*firefox',
+        '*googlechrome',
         'http://localhost:8000')
     world.sel.start()
 
@@ -97,13 +98,14 @@ def import_forms(feature):
     Should not be called directly
 
     """
-    app = feature.described_at.file.split("/")[-3]
+    app = "zds."+os.path.basename(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(feature.described_at.file)), os.pardir)))
+    #app = feature.described_at.file.split("/")[-3]
     world.app = app
     try:
-        forms_app = __import__(app, fromlist='forms')
+        forms_app = __import__(app, fromlist=['forms'])
         world.forms = forms_app.forms
     except:
-        print "Couldn't find any forms for %s" % app
+        print u"Impossible de trouver des formulaires pour l'application {}".format(app)
 
 
 #####################################################################
@@ -121,15 +123,17 @@ def using_selenium(step):
 
     """
     world.using_selenium = True
+    print(u"Sélenium utilisé")
 
 
 @step(u'Ne plus utiliser selenium')
 def finished_selenium(step):
     """Stop using selenium - go back to Django's Client."""
     world.using_selenium = False
+    print(u"Sélenium pas utilisé")
 
 
-@step(ru'un timeout de "(\d+)" sec')
+@step(u'un timeout de "(\d+)"')
 def set_sel_timeout(step, timeout):
     """Set the page timeout for selenium tests.
 
@@ -137,13 +141,14 @@ def set_sel_timeout(step, timeout):
 
     """
     world.timeout = int(timeout)
+    print(u"Timeout activé")
 
 #####################################################################
 
 ######## PAGE ACCESS ################################################
 
 
-@step(ru'Je vais sur le lien "(.*)"')
+@step(u'Je vais sur le lien "(.*)"')
 def access_url(step, url):
     """Go to the url check for a 200 response.
 
@@ -154,6 +159,7 @@ def access_url(step, url):
     :py:data:`world.timeout` which can be set with :py:func:`set_sel_timeout`.
 
     """
+    print(u"Je vais sur l'url")
     if world.using_selenium:
         world.sel.open(url)
         world.sel.wait_for_page_to_load(world.timeout)
@@ -163,14 +169,17 @@ def access_url(step, url):
     world.dom = html.fromstring(response.content)
     world.templates = [t.name for t in response.template]
 
+    print(u"Je suis sur l'url")
 
-@step(ru'Je vais sur le lien inversé "(.*)"')
+
+@step(u'Je vais sur le lien inverse "(.*)"')
 def access_reverse_url(step, url):
     """Reverse the named url and visit it check for a 200 response.
 
     The same as :py:func:`access_url` except using a django-named url.
 
     """
+    print(u"Je vais sur le reverse url")
     rev_url = reverse(url)
     if world.using_selenium:
         world.sel.open(rev_url)
@@ -181,8 +190,10 @@ def access_reverse_url(step, url):
     world.dom = html.fromstring(response.content)
     world.templates = [t.name for t in response.template]
 
+    print(u"Je suis sur le reverse url")
 
-@step(ru'Je pense être redirigé de "([^"]*)" à "([^"]*)"')
+
+@step(u'Je pense etre redirige de "([^"]*)" a "([^"]*)"')
 def expect_redirect(step, from_url, to_url):
     """Go to a url and expect a 302, check the DOM returned == expected DOM.
 
@@ -215,7 +226,7 @@ def expect_redirect(step, from_url, to_url):
         world.sel.wait_for_page_to_load(world.timeout)
 
 
-@step(ru'Je suis sur le template "(.*)"')
+@step(u'Je suis sur le template "(.*)"')
 def hit_template(step, template):
     """Using Django's Client, check that a template was rendered.
 
@@ -233,7 +244,7 @@ def hit_template(step, template):
 ######### DOM #######################################################
 
 
-@step(ru'Je vois dans le titre(\d+) "(.*)"')
+@step(u'Je vois dans le titre(\d+) "(.*)"')
 def see_header(step, header, text):
     """Check page for some text in a particular header type.
 
@@ -251,7 +262,7 @@ def see_header(step, header, text):
         assert header.text == text
 
 
-@step(ru'Son id est "(.*)"')
+@step(u'Son id est "(.*)"')
 def that_its_id_is(step, id):
     """Check the element's id stored in :py:data:`world.element`.
 
@@ -283,7 +294,7 @@ def if_it_passes_then_should_see_text(step, result, text):
 ######### GLOBAL FUNCS ##############################################
 
 
-@step(u'Je ne suis pas connecté')
+@step(u'Je ne suis pas connecte')
 def given_i_am_not_logged_in(step):
     """Do a logout with Django or Selenium.
 
@@ -291,12 +302,12 @@ def given_i_am_not_logged_in(step):
     :py:func:`expect_redirect`.
 
     """
-    auth_logout = reverse("auth_logout")
-    step.given('I expect to be redirected from "{}" to "/"'.format(auth_logout))
+    auth_logout = reverse("logout")
+    step.given('Je pense etre redirige de "{}" a "/"'.format(auth_logout))
     # what can I assert here?!
 
 
-@step(u'Je vois que les champs obligatoires du formulaire "(.*)" sont présents')
+@step(u'Je vois que les champs obligatoires du formulaire "(.*)" sont presents')
 def i_see_that_the_form_required_fields_are_present(step, friendly_form_name):
     """Load the django form and check all its required fields are present.
 
@@ -380,7 +391,7 @@ def check_the_field_(step, id, checked):
         assert False, 'Cette étape doit être implentée'
 
 
-@step(u'Le résultat de la soumission du formulaire doit être "(.*)"')
+@step(u'Le resultat de la soumission du formulaire doit etre "(.*)"')
 def result_of_form_submission_should_be(step, result):
     """Check for an errorlist, and compare that to expectation of presence.
 
